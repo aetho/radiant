@@ -1,0 +1,24 @@
+{
+  "name": "radiant",
+  "version": "1.0.0",
+  "description": "Discord bot with miscellaneous functionality",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aetho/radiant.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "radiant"
+  ],
+  "author": "Phuoc Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aetho/radiant/issues"
+  },
+  "homepage": "https://github.com/aetho/radiant#readme"
+}
