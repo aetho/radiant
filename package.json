@@ -20,5 +20,13 @@
   "bugs": {
     "url": "https://github.com/aetho/radiant/issues"
   },
-  "homepage": "https://github.com/aetho/radiant#readme"
+  "homepage": "https://github.com/aetho/radiant#readme",
+  "dependencies": {
+    "@discordjs/uws": "^11.149.1",
+    "bufferutil": "^4.0.1",
+    "discord.js": "^11.5.1",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "libsodium-wrappers": "^0.7.5",
+    "node-opus": "^0.3.2"
+  }
 }
