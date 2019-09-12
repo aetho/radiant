@@ -18,6 +18,9 @@ class Utility {
 }
 
 const commands = {
+    'help': (msg) => {
+        msg.channel.send(`My current commands are: \`${Object.keys(commands).join(', ')}\``);
+    },
     'eval': (msg) => {
         let cmd = Utility.parseCommand(msg, prfx);
         try {
