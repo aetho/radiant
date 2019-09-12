@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const Discord = require('discord.js');
 const client = new Discord.Client();
 require('dotenv').config();
 const prfx = process.env.PFX;
@@ -22,6 +22,9 @@ const commands = {
         msg.channel.send(`My current commands are: \`${Object.keys(commands).join(', ')}\``);
     },
     'eval': (msg) => {
+        if (msg.author.id != '139034967958224896'){
+            return msg.channel.send('You do not have permission to use this command.');
+        }
         let cmd = Utility.parseCommand(msg, prfx);
         try {
             msg.channel.send({
@@ -29,11 +32,11 @@ const commands = {
                     color: 3447003,
                     fields: [
                         {
-                            name: "✅ INPUT",
+                            name: '✅ INPUT',
                             value: `\`\`\`js\n${cmd.args.join(' ')}\`\`\``
                         },
                         {
-                            name: "➡ OUTPUT",
+                            name: '➡ OUTPUT',
                             value: `\`\`\`js\n${eval(cmd.args.join(' '))}\`\`\``
                         }
                     ]
@@ -45,23 +48,17 @@ const commands = {
                     color: 3447003,
                     fields: [
                         {
-                            name: "❌ INPUT",
+                            name: '❌ INPUT',
                             value: `\`\`\`js\n${cmd.args.join(' ')}\`\`\``
                         },
                         {
-                            name: "➡ OUTPUT",
+                            name: '➡ OUTPUT',
                             value: `\`\`\`js\n${e.message}\`\`\``
                         }
                     ]
                 }
             });
         }
-    },
-    'iam': (msg) => {
-        let roles = msg.guild.roles.array();
-        let roleNames = roles.map(x => x.name);
-        roleNames.splice(roleNames.indexOf('@everyone'), 1);
-        msg.channel.send(roleNames);
     },
     'invite': (msg) => {
         msg.channel.send(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot`);
@@ -73,15 +70,13 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-    if (msg.author.id == '139034967958224896') {
-        if (msg.content.startsWith(prfx) || msg.isMemberMentioned(client.user)) {
-            console.log(`Message acknowledged: ${msg.content}`);
-            // console.log(Utility.parseCommand(msg, prfx));
+    if (msg.content.startsWith(prfx) || msg.isMemberMentioned(client.user)) {
+        console.log(`Message acknowledged: ${msg.content}`);
+        // console.log(Utility.parseCommand(msg, prfx));
 
-            let cmd = Utility.parseCommand(msg, prfx);
-            if (commands.hasOwnProperty(cmd.func)) commands[cmd.func](msg);
+        let cmd = Utility.parseCommand(msg, prfx);
+        if (commands.hasOwnProperty(cmd.func)) commands[cmd.func](msg);
 
-        }
     }
 });
 
