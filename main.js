@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const credentials = require("./credentials.json");
-const prfx = '<';
+require('dotenv').config();
+const prfx = 'syl.';
 
 class Utility {
     static parseCommand(msg, prfx) {
@@ -53,6 +53,12 @@ const commands = {
                 }
             });
         }
+    },
+    'iam': (msg) => {
+        let roles = msg.guild.roles.array();
+        let roleNames = roles.map(x => x.name);
+        roleNames.splice(roleNames.indexOf('@everyone'), 1);
+        msg.channel.send(roleNames);
     }
 }
 
@@ -73,4 +79,4 @@ client.on('message', (msg) => {
     }
 });
 
-client.login(credentials.discord);
+client.login(process.env.DISCORD_TOKEN);
