@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 require('dotenv').config();
-const prfx = 'syl.';
+const prfx = process.env.PFX;
 
 class Utility {
     static parseCommand(msg, prfx) {
@@ -59,6 +59,9 @@ const commands = {
         let roleNames = roles.map(x => x.name);
         roleNames.splice(roleNames.indexOf('@everyone'), 1);
         msg.channel.send(roleNames);
+    },
+    'invite': (msg) => {
+        msg.channel.send(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot`);
     }
 }
 
