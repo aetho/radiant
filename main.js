@@ -62,6 +62,37 @@ const commands = {
     },
     'invite': (msg) => {
         msg.channel.send(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot`);
+    },
+    'iam': (msg) => {
+        let cmd = Utility.parseCommand(msg, prfx);
+
+        // Filter out unassignable roles
+        let roles = msg.guild.roles.array().filter(role => {
+            if (!role.managed && role.name != '@everyone') return role;
+        });
+
+        if (cmd.func.includes('set')) {
+            if (cmd.args.length > 0) {
+                // Set choosable roles for iam command
+                msg.channel.send('WIP');
+            } else {
+                // Display list of assignable roles
+                let roleList = roles.map(role => {
+                    if (!role.managed && role.name != '@everyone') return (role + ` (ID: ${role.id})`);
+                });
+                let str = 'Please specify roles that people can choose from\n';
+                str += `Syntax: \`${prfx}iamset <Role ID> <Roles ID>\`\n`;
+                str += 'Here are the roles of your server:\n';
+                str += roleList.join('\n');
+                msg.channel.send(str, { disableEveryone: true });
+            }
+        } else if (cmd.func.includes('rem')) {
+            //Remove choosable roles for iam command
+            msg.channel.send('WIP');
+        } else {
+            //Assign role to user
+            msg.channel.send('WIP');
+        }
     }
 }
 
@@ -70,6 +101,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
+    if (msg.author == client.user) return;
     if (msg.content.startsWith(prfx) || msg.isMemberMentioned(client.user)) {
         console.log(`Message acknowledged: ${msg.content}`);
 
