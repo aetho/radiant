@@ -22,7 +22,7 @@ const commands = {
         msg.channel.send(`My current commands are: \`${Object.keys(commands).join(', ')}\``);
     },
     'eval': (msg) => {
-        if (msg.author.id != '139034967958224896'){
+        if (msg.author.id != '139034967958224896') {
             return msg.channel.send('You do not have permission to use this command.');
         }
         let cmd = Utility.parseCommand(msg, prfx);
@@ -72,11 +72,11 @@ client.on('ready', () => {
 client.on('message', (msg) => {
     if (msg.content.startsWith(prfx) || msg.isMemberMentioned(client.user)) {
         console.log(`Message acknowledged: ${msg.content}`);
-        // console.log(Utility.parseCommand(msg, prfx));
 
         let cmd = Utility.parseCommand(msg, prfx);
-        if (commands.hasOwnProperty(cmd.func)) commands[cmd.func](msg);
-
+        Object.keys(commands).forEach(key => {
+            if (cmd.func.startsWith(key)) commands[key](msg);
+        });
     }
 });
 
