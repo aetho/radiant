@@ -78,10 +78,10 @@ const commands = {
             } else {
                 // Display list of assignable roles
                 let roleList = roles.map(role => {
-                    if (!role.managed && role.name != '@everyone') return (role + ` (ID: ${role.id})`);
+                    if (!role.managed && role.name != '@everyone') return (`**${role.name}** \`id: ${role.id}\``);
                 });
                 let str = 'Please specify roles that people can choose from\n';
-                str += `Syntax: \`${prfx}iamset <Role ID> <Roles ID>\`\n`;
+                str += `Syntax: \`${prfx}iamset <Role ID> <Role ID>\`\n`;
                 str += 'Here are the roles of your server:\n';
                 str += roleList.join('\n');
                 msg.channel.send(str, { disableEveryone: true });
