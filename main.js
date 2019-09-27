@@ -74,7 +74,10 @@ const commands = {
 
         // Get guild info from storage
         let guild = await storage.getItem(msg.guild.id);
-        if (!guild) guild = {};
+        if (!guild) {
+            guild = {};
+            await storage.setItem(msg.guild.id, guild);
+        }
 
         if (cmd.func.includes('set')) {
             if (!guild.iamset) guild.iamset = [];
@@ -96,14 +99,24 @@ const commands = {
                     }
                 });
             } else {
+                let str = '';
+                str += 'Please specify roles available for self-assign\n';
+                str += `Syntax: \`${prfx}iamset <Role ID> <Role ID>\`\n\n`;
+
+
                 // Display list of assignable roles
-                let roleList = roles.map(role => {
-                    if (!role.managed && role.name != '@everyone') return (`**${role.name}** \`id: ${role.id}\``);
-                });
-                let str = 'Please specify roles that people can choose from\n';
-                str += `Syntax: \`${prfx}iamset <Role ID> <Role ID>\`\n`;
-                str += 'Here are the roles of your server:\n';
-                str += roleList.join('\n');
+                let rolesList = roles.map(role => { return (`\`${role.id}\`: **${role.name}**`); });
+                str += 'Roles in your server:\n';
+                str += rolesList.join('\n');
+                str += '\n\n';
+
+                // Display currently assignable roles
+                if (guild.iamset.length > 0) {
+                    let storedRolesList = guild.iamset.map(role => { return (`**${role.name}**`) });
+                    str += 'Current self-assigned roles:\n'
+                    str += storedRolesList.join(', ');
+                }
+
                 msg.channel.send(str, { disableEveryone: true });
             }
         } else if (cmd.func.includes('rem')) {
