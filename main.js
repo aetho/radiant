@@ -80,7 +80,7 @@ const commands = {
         }
 
         if (cmd.func.includes('set')) {
-            if (!msg.member.hasPermission('ADMINISTRATOR')) return msg.channel.send('You do not have permission.');
+            if (!msg.member.hasPermission('MANAGE_ROLES')) return msg.channel.send('You do not have permission.');
             if (!guild.iamset) guild.iamset = [];
             if (cmd.args.length > 0) {
                 // Set choosable roles for iam command
