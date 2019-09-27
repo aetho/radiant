@@ -88,7 +88,7 @@ const commands = {
                     let storedRole = guild.iamset.find(el => { return el.id == x; });
 
                     if (role && !storedRole) { // store role if valid role and not already stored
-                        guild.iamset.push(role);
+                        guild.iamset.push(role.id);
                         await storage.setItem(msg.guild.id, guild);
                         msg.react('✅');
                     } else { // React accordingly
