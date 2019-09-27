@@ -72,23 +72,22 @@ const commands = {
             if (!role.managed && role.name != '@everyone') return role;
         });
 
-        if (cmd.func.includes('set')) {
-            let guild = await storage.getItem(msg.guild.id);
-            if (!guild) {
-                guild = {};
-                guild.iamset = [];
-            }
+        // Get guild info from storage
+        let guild = await storage.getItem(msg.guild.id);
+        if (!guild) guild = {};
 
+        if (cmd.func.includes('set')) {
+            if (!guild.iamset) guild.iamset = [];
             if (cmd.args.length > 0) {
                 // Set choosable roles for iam command
                 cmd.args.forEach(async x => {
                     // Find role
                     let role = roles.find(el => { return el.id == x; });
                     // Find if role is already set
-                    let storedRole = guild.iamset.find(el => { return el == x; });
+                    let storedRole = guild.iamset.find(el => { return el.id == x; });
 
                     if (role && !storedRole) { // store role if valid role and not already stored
-                        guild.iamset.push(role.id);
+                        guild.iamset.push({ id: role.id, name: role.name });
                         await storage.setItem(msg.guild.id, guild);
                         msg.react('✅');
                     } else { // React accordingly
