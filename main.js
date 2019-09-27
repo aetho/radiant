@@ -1,6 +1,7 @@
+require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
-require('dotenv').config();
+const storage = require('node-persist');
 const prfx = process.env.PFX;
 
 class Utility {
@@ -63,7 +64,7 @@ const commands = {
     'invite': (msg) => {
         msg.channel.send(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot`);
     },
-    'iam': (msg) => {
+    'iam': async (msg) => {
         let cmd = Utility.parseCommand(msg, prfx);
 
         // Filter out unassignable roles
@@ -72,9 +73,29 @@ const commands = {
         });
 
         if (cmd.func.includes('set')) {
+            let guild = await storage.getItem(msg.guild.id);
+            if (!guild) {
+                guild = {};
+                guild.iamset = [];
+            }
+
             if (cmd.args.length > 0) {
                 // Set choosable roles for iam command
-                msg.channel.send('WIP');
+                cmd.args.forEach(async x => {
+                    // Find role
+                    let role = roles.find(el => { return el.id == x; });
+                    // Find if role is already set
+                    let storedRole = guild.iamset.find(el => { return el.id == x; });
+
+                    if (role && !storedRole) { // store role if valid role and not already stored
+                        guild.iamset.push(role);
+                        await storage.setItem(msg.guild.id, guild);
+                        msg.react('✅');
+                    } else { // React accordingly
+                        if (storedRole) msg.react('✅');
+                        else msg.react('❌');
+                    }
+                });
             } else {
                 // Display list of assignable roles
                 let roleList = roles.map(role => {
@@ -96,7 +117,8 @@ const commands = {
     }
 }
 
-client.on('ready', () => {
+client.on('ready', async () => {
+    await storage.init();
     console.log(`Logged in as ${client.user.tag}`);
 });
 
