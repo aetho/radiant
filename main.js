@@ -85,7 +85,7 @@ const commands = {
                     // Find role
                     let role = roles.find(el => { return el.id == x; });
                     // Find if role is already set
-                    let storedRole = guild.iamset.find(el => { return el.id == x; });
+                    let storedRole = guild.iamset.find(el => { return el == x; });
 
                     if (role && !storedRole) { // store role if valid role and not already stored
                         guild.iamset.push(role.id);
