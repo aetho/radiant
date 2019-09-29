@@ -164,8 +164,34 @@ const commands = {
             // Remove roles from user
             msg.channel.send('WIP');
         } else {
-            // Assign roles to user
-            msg.channel.send('WIP');
+            if (!guild.iamset || guild.iamset.length < 1) return msg.channel.send('No self-assign roles are set.');
+
+            if (cmd.args.length > 0) { // Assign roles to user
+                cmd.args.forEach(async x => {
+                    // Find if role is in storage
+                    let storedRole = guild.iamset.find(el => { return el.id == x; });
+
+                    if (storedRole) { // Assign role if role found in storage
+                        let role = roles.find(el => { return el.id == storedRole.id });
+                        msg.guild.member(msg.author).addRole(role);
+                        msg.react('✅');
+                    } else { // React accordingly
+                        msg.react('❌');
+                    }
+                });
+            } else { // Send instructions
+                let str = 'Please specify roles you wish to have\n';
+                str += `Syntax: \`${prfx}iam <Role ID> <Role ID>\`\n\n`;
+
+                // Display currently assignable roles
+                if (guild.iamset.length > 0) {
+                    let storedRolesList = guild.iamset.map(role => { return (`\`${role.id}\`: **${role.name}**`) });
+                    str += 'Roles available for self-assign:\n'
+                    str += storedRolesList.join('\n');
+                }
+
+                msg.channel.send(str);
+            }
         }
     }
 }
