@@ -160,8 +160,11 @@ const commands = {
 
                 msg.channel.send(str);
             }
+        } else if (cmd.func.includes('not')) {
+            // Remove roles from user
+            msg.channel.send('WIP');
         } else {
-            // Assign role to user
+            // Assign roles to user
             msg.channel.send('WIP');
         }
     }
