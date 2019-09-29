@@ -161,8 +161,35 @@ const commands = {
                 msg.channel.send(str);
             }
         } else if (cmd.func.includes('not')) {
-            // Remove roles from user
-            msg.channel.send('WIP');
+            if (!guild.iamset || guild.iamset.length < 1) return msg.channel.send('No self-assign roles are set.');
+
+            if (cmd.args.length > 0) { // Remove roles from user
+                cmd.args.forEach(async x => {
+                    // Find role
+                    let role = roles.find(el => { return el.id == x; });
+                    // Find role from storage
+                    let storedRole = guild.iamset.find(el => { return el.id == x });
+
+                    if (role && storedRole) { // Remove role if valid role
+                        msg.guild.member(msg.author).removeRole(role);
+                        msg.react('✅');
+                    } else { // React accordingly
+                        msg.react('❌');
+                    }
+                });
+            } else { // Send instructions
+                let str = 'Please specify roles you wish to remove\n';
+                str += `Syntax: \`${prfx}iamnot <Role ID> <Role ID>\`\n\n`;
+
+                // Display currently assignable roles
+                if (guild.iamset.length > 0) {
+                    let storedRolesList = guild.iamset.map(role => { return (`\`${role.id}\`: **${role.name}**`) });
+                    str += 'Roles available for self-assign:\n'
+                    str += storedRolesList.join('\n');
+                }
+
+                msg.channel.send(str);
+            }
         } else {
             if (!guild.iamset || guild.iamset.length < 1) return msg.channel.send('No self-assign roles are set.');
 
