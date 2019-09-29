@@ -80,8 +80,10 @@ const commands = {
         }
 
         if (cmd.func.includes('set')) {
+            // Checks
             if (!msg.member.hasPermission('MANAGE_ROLES')) return msg.channel.send('You do not have permission.');
             if (!guild.iamset) guild.iamset = [];
+
             if (cmd.args.length > 0) {
                 // Set choosable roles for iam command
                 cmd.args.forEach(async x => {
@@ -118,13 +120,48 @@ const commands = {
                     str += storedRolesList.join(', ');
                 }
 
-                msg.channel.send(str, { disableEveryone: true });
+                msg.channel.send(str);
             }
         } else if (cmd.func.includes('rem')) {
-            //Remove choosable roles for iam command
-            msg.channel.send('WIP');
+            // Checks
+            if (!msg.member.hasPermission('MANAGE_ROLES')) return msg.channel.send('You do not have permission.');
+            if (!guild.iamset || guild.iamset.length < 1) return msg.channel.send('No self-assign roles to remove.');
+
+
+            if (cmd.args.length > 0) { // Remove specified roles for iam command
+                cmd.args.forEach(async x => {
+                    // Find if role is in storage
+                    let storedRole = guild.iamset.find(el => { return el.id == x; });
+
+                    if (storedRole) { // remove role if role is found in storage
+                        guild.iamset.splice(guild.iamset.indexOf(storedRole), 1);
+                        await storage.setItem(msg.guild.id, guild);
+                        msg.react('✅');
+                    } else { // React accordingly
+                        msg.react('❌');
+                    }
+                });
+            } else { // Send instructions
+                let str = 'Please specify roles to be removed from self-assign\n';
+                str += `Syntax: \`${prfx}iamrem <Role ID> <Role ID>\`\n\n`;
+
+                // Display list of assignable roles
+                let rolesList = roles.map(role => { return (`\`${role.id}\`: **${role.name}**`); });
+                str += 'Roles in your server:\n';
+                str += rolesList.join('\n');
+                str += '\n\n';
+
+                // Display currently assignable roles
+                if (guild.iamset.length > 0) {
+                    let storedRolesList = guild.iamset.map(role => { return (`**${role.name}**`) });
+                    str += 'Current self-assigned roles:\n'
+                    str += storedRolesList.join(', ');
+                }
+
+                msg.channel.send(str);
+            }
         } else {
-            //Assign role to user
+            // Assign role to user
             msg.channel.send('WIP');
         }
     }
