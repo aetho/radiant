@@ -2,6 +2,9 @@
   "name": "radiant",
   "version": "1.0.0",
   "description": "Discord bot with miscellaneous functionality",
+  "engines": {
+    "node":"11.12.0"
+  },
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
