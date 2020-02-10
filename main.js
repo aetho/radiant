@@ -232,11 +232,15 @@ client.on('message', (msg) => {
     if (msg.author == client.user) return;
     if (msg.content.startsWith(prfx) || msg.isMemberMentioned(client.user)) {
         console.log(`Message acknowledged: ${msg.content}`);
-
+        
         let cmd = Utility.parseCommand(msg, prfx);
         Object.keys(commands).forEach(key => {
             if (cmd.func.startsWith(key)) commands[key](msg);
         });
+    }
+    // To be removed
+    if(msg.author.id == '140315710592122881'){
+        msg.react(msg.guild.emojis.get('440800829528735754'));
     }
 });
 
