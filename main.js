@@ -238,10 +238,6 @@ client.on('message', (msg) => {
             if (cmd.func.startsWith(key)) commands[key](msg);
         });
     }
-    // To be removed
-    if(msg.author.id == '140315710592122881'){
-        msg.react(msg.guild.emojis.get('440800829528735754'));
-    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
