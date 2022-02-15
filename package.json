@@ -1,10 +1,7 @@
 {
   "name": "radiant",
-  "version": "1.0.0",
-  "description": "Discord bot with miscellaneous functionality",
-  "engines": {
-    "node":"11.12.0"
-  },
+  "version": "0.0.1",
+  "description": "Miscellaneous Discord Bot",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,23 +12,19 @@
   },
   "keywords": [
     "discord",
-    "bot",
-    "radiant"
+    "bot"
   ],
-  "author": "Phuoc Nguyen",
-  "license": "MIT",
+  "author": "Aethos",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/aetho/radiant/issues"
   },
   "homepage": "https://github.com/aetho/radiant#readme",
   "dependencies": {
-    "@discordjs/uws": "^11.149.1",
-    "bufferutil": "^4.0.1",
-    "discord.js": "^11.5.1",
-    "dotenv": "^8.1.0",
-    "erlpack": "github:hammerandchisel/erlpack",
-    "libsodium-wrappers": "^0.7.5",
-    "node-opus": "^0.3.2",
-    "node-persist": "^3.0.5"
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0"
   }
 }
