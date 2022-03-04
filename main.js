@@ -1,9 +1,11 @@
 require("dotenv").config();
 const fs = require("fs");
 const { Client, Intents, Collection } = require("discord.js");
+const Keyv = require("keyv");
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const keyv = new Keyv(process.env.REDISCLOUD_URL);
 
 client.commands = new Collection();
 const commandFiles = fs
@@ -16,17 +18,13 @@ for (const file of commandFiles) {
 }
 
 client.on("interactionCreate", async (interaction) => {
+	if (!interaction.isCommand()) return;
+
 	const command = client.commands.get(interaction.commandName);
 	if (!command) return;
 
 	try {
-		if (interaction.isCommand()) {
-			await command.execute(interaction);
-		} else if (interaction.isSelectMenu()) {
-			await command.select(interaction);
-		} else if (interaction.isButton()) {
-			await command.button(interaction);
-		}
+		await command.execute(interaction, keyv);
 	} catch (error) {
 		console.error(error);
 		await interaction.reply({

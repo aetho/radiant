@@ -7,7 +7,7 @@ module.exports = {
 		.setDescription(
 			"Sets the provided voice channel as a dynamic voice channel."
 		),
-	async execute(commandInteraction) {
+	async execute(commandInteraction, keyv) {
 		// Construct select menu
 		const channels = await commandInteraction.guild.channels.fetch();
 		const voiceChannels = channels.filter((el) => el.type === "GUILD_VOICE");
@@ -44,8 +44,13 @@ module.exports = {
 		collector.on("collect", async (selectInteraction) => {
 			if (selectInteraction.user.id === commandInteraction.user.id) {
 				const choice = voiceChannels.get(selectInteraction.values[0]).name;
+				const choiceID = voiceChannels.get(selectInteraction.values[0]).id;
 
-				// TODO: Store/update dynamic voice channel
+				const currentData = await keyv.get(commandInteraction.guild.id);
+				await keyv.set(commandInteraction.guild.id, {
+					...currentData,
+					dynamicvc: choiceID,
+				});
 
 				const reply = await selectInteraction.reply({
 					content: `Dynamic voice channel has been set to \`${choice}\`.`,
