@@ -1,1 +1,1 @@
-worker: node main.js
+worker: node deploy-commands.js && node main.js
