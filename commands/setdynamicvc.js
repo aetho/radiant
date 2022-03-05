@@ -46,12 +46,14 @@ module.exports = {
 				const choice = voiceChannels.get(selectInteraction.values[0]).name;
 				const choiceID = voiceChannels.get(selectInteraction.values[0]).id;
 
-				const currentData = await keyv.get(commandInteraction.guild.id);
+				// Update guildDataStore with selection
+				const guildDataStore = await keyv.get(commandInteraction.guild.id);
 				await keyv.set(commandInteraction.guild.id, {
-					...currentData,
+					...guildDataStore,
 					dynamicvc: choiceID,
 				});
 
+				// Reply with selected choice
 				const reply = await selectInteraction.reply({
 					content: `Dynamic voice channel has been set to \`${choice}\`.`,
 					fetchReply: true,

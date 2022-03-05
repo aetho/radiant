@@ -2,9 +2,12 @@ require("dotenv").config();
 const fs = require("fs");
 const { Client, Intents, Collection } = require("discord.js");
 const Keyv = require("keyv");
+const randomWords = require("random-words");
 const token = process.env.DISCORD_TOKEN;
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+});
 const keyv = new Keyv(process.env.REDISCLOUD_URL);
 
 client.commands = new Collection();
@@ -31,6 +34,46 @@ client.on("interactionCreate", async (interaction) => {
 			content: "There was an error while executing this command!",
 			ephemeral: true,
 		});
+	}
+});
+
+const dynamicVoiceChannels = [];
+client.on("voiceStateUpdate", async (oldState, newState) => {
+	const guildDataStore = await keyv.get(newState.guild.id);
+	if (!guildDataStore) return;
+
+	// Check dynamic voice channel
+	if (newState.channelId == guildDataStore.dynamicvc) {
+		// Create voice channel
+		const channelName = randomWords({
+			exactly: 3,
+			maxLength: 4,
+			join: " ",
+			formatter: (word, index) => {
+				return index === 0
+					? word.slice(0, 1).toUpperCase().concat(word.slice(1))
+					: word;
+			},
+		});
+		const channel = await newState.channel.clone({
+			name: channelName,
+		});
+		dynamicVoiceChannels.push(channel.id);
+		// Move newState.member to new voice channel
+		newState.member.voice.setChannel(channel);
+	}
+
+	// Check if channel empty on update
+	if (oldState.channel?.members?.size < 1) {
+		// Check channel was created dynamically
+		if (dynamicVoiceChannels.find((el) => el == oldState.channelId)) {
+			// Delete channel
+			await oldState.channel.delete();
+
+			// Remove id from dynamic voice channels
+			const idx = dynamicVoiceChannels.indexOf(oldState.channelId);
+			dynamicVoiceChannels.splice(idx, 1);
+		}
 	}
 });
 
