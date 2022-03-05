@@ -2,7 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const { Client, Intents, Collection } = require("discord.js");
 const Keyv = require("keyv");
-const randomWords = require("random-words");
+const humanId = require("human-id").humanId;
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({
@@ -45,15 +45,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 	// Check dynamic voice channel
 	if (newState.channelId == guildDataStore.dynamicvc) {
 		// Create voice channel
-		const channelName = randomWords({
-			exactly: 3,
-			maxLength: 4,
-			join: " ",
-			formatter: (word, index) => {
-				return index === 0
-					? word.slice(0, 1).toUpperCase().concat(word.slice(1))
-					: word;
-			},
+		const channelName = humanId({
+			separator: " ",
+			capitalize: true,
+			maxLength: 16,
 		});
 		const channel = await newState.channel.clone({
 			name: channelName,
