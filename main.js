@@ -6,7 +6,13 @@ const humanId = require("human-id").humanId;
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+	intents: [
+		Intents.FLAGS.GUILDS,
+		Intents.FLAGS.GUILD_VOICE_STATES,
+		Intents.FLAGS.GUILD_PRESENCES,
+		Intents.FLAGS.GUILD_MEMBERS,
+		Intents.FLAGS.GUILD_MESSAGES,
+	],
 });
 const keyv = new Keyv(process.env.REDISCLOUD_URL);
 
@@ -21,8 +27,6 @@ for (const file of commandFiles) {
 }
 
 client.on("interactionCreate", async (interaction) => {
-	if (!interaction.isCommand()) return;
-
 	const command = client.commands.get(interaction.commandName);
 	if (!command) return;
 
@@ -60,14 +64,12 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
 	// Check if channel empty on update
 	if (oldState.channel?.members?.size < 1) {
-		// Check channel was created dynamically
-		if (dynamicVoiceChannels.find((el) => el == oldState.channelId)) {
+		const idx = dynamicVoiceChannels.indexOf(oldState.channelId);
+		if (idx != -1) {
+			// Remove id from dynamic voice channels
+			dynamicVoiceChannels.splice(idx, 1);
 			// Delete channel
 			await oldState.channel.delete();
-
-			// Remove id from dynamic voice channels
-			const idx = dynamicVoiceChannels.indexOf(oldState.channelId);
-			dynamicVoiceChannels.splice(idx, 1);
 		}
 	}
 });

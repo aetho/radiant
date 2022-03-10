@@ -17,8 +17,10 @@ module.exports = {
 	async execute(commandInteraction, keyv) {
 		const subcommand = commandInteraction.options.getSubcommand();
 		if (subcommand === "show") {
-			const data = await keyv.get(commandInteraction.guild.id);
-			await commandInteraction.reply(JSON.stringify(data ? data : {}));
+			const guildDataStore = await keyv.get(commandInteraction.guild.id);
+			await commandInteraction.reply(
+				JSON.stringify(guildDataStore ? guildDataStore : {})
+			);
 		} else if (subcommand === "reset") {
 			await keyv.set(commandInteraction.guild.id, null);
 			await commandInteraction.reply("Settings cleared");
