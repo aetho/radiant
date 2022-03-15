@@ -76,8 +76,12 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 	if (oldState.channel?.members?.size < 1) {
 		const idx = guildDynamics.indexOf(oldState.channelId);
 		if (idx != -1) {
-			// Remove id from dynamic voice channels
+			// Remove id from dynamic voice channels and update DB
 			guildDynamics.splice(idx, 1);
+			await keyv.set(newState.guild.id, {
+				...guildDataStore,
+				activedynamics: guildDynamics,
+			});
 			// Delete channel
 			await oldState.channel.delete();
 		}
