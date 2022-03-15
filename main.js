@@ -61,29 +61,30 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 			name: channelName,
 		});
 
+		// Move newState.member to new voice channel
+		newState.member.voice.setChannel(channel);
+
 		// Update DB with created voice channel
 		guildDynamics.push(channel.id);
 		await keyv.set(newState.guild.id, {
 			...guildDataStore,
 			activedynamics: guildDynamics,
 		});
-
-		// Move newState.member to new voice channel
-		newState.member.voice.setChannel(channel);
 	}
 
 	// Check if channel empty on update
 	if (oldState.channel?.members?.size < 1) {
 		const idx = guildDynamics.indexOf(oldState.channelId);
 		if (idx != -1) {
+			// Delete channel
+			await oldState.channel.delete();
+
 			// Remove id from dynamic voice channels and update DB
 			guildDynamics.splice(idx, 1);
 			await keyv.set(newState.guild.id, {
 				...guildDataStore,
 				activedynamics: guildDynamics,
 			});
-			// Delete channel
-			await oldState.channel.delete();
 		}
 	}
 });
