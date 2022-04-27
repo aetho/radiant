@@ -89,7 +89,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 	}
 });
 
-client.once("ready", () => {
+client.once("ready", async () => {
 	console.log("Ready");
 });
 
